@@ -1,0 +1,4 @@
+# PROJECT Vite
+
+- React
+- GraphQL
