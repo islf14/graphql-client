@@ -1,29 +1,43 @@
-import { useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import { Persons } from './Persons';
+import { PersonForm } from './PersonForm';
+import { usePersons } from './persons/custom-hooks';
+import { useState } from 'react';
+import { Notify } from './Notify';
+import { PhoneForm } from './PhoneForm';
 
 function App() {
-  useEffect(() => {
-    fetch('http://localhost:4000/', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({"query":"query Query($phone: YesNo) {\r\n  allPersons(phone: $phone) {\r\n    name\r\n    phone\r\n  }\r\n}"})
-    })
-    .then(res => res.json())
-    .then(res => {
-      console.log(res.data)
-    })
-  })
+  const { loading, error, data } = usePersons();
+  const [errorMessage, setErrorMessage] = useState(null);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error : {error.message}</p>;
+
+  const notifyError = message => {
+    setErrorMessage(message);
+    setTimeout( () => setErrorMessage(null), 5000)
+  }
 
   return (
     <>
-      <div>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <div className='App'>
+        <div>
+          <a href="https://react.dev" target="_blank">
+            <img src={reactLogo} className="logo react" alt="React logo" />
+          </a>
+        </div>
+        <div>
+          <Notify errorMessage={errorMessage}/>
+        </div>
+        <div>
+          <h1>GraphQL</h1>
+          {data &&
+            <Persons persons={data.allPersons}/>
+          }
+        </div>
+        <PhoneForm notifyError={notifyError}/>
+        <PersonForm notifyError={notifyError}/>
       </div>
-      <h1>GraphQL</h1>
     </>
   )
 }
