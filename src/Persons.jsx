@@ -7,12 +7,10 @@ export const Persons = ({persons}) => {
   const [person, setPerson] = useState(null)
 
   const showPerson = name => {
-    console.log(name)
     getPerson({variables: {name : name}})
   }
 
   useEffect(() => {
-    console.log(result)
     if(result.data) {
       setPerson(result.data.findPerson)
     }

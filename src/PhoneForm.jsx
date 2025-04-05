@@ -11,7 +11,6 @@ export const PhoneForm = ({notifyError}) => {
   const [changeNumber, result] = useMutation(EDIT_NUMBER)
 
   useEffect(() => {
-    console.log(result)
     if(result.data && result.data.editNumber === null) {
       console.error('Person not found')
       notifyError('Person not found')
