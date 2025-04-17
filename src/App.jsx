@@ -7,7 +7,8 @@ import { useState } from 'react';
 import { Notify } from './Notify';
 import { PhoneForm } from './PhoneForm';
 import { LoginForm } from './LoginForm';
-import { useApolloClient } from '@apollo/client';
+import { useApolloClient, useSubscription } from '@apollo/client';
+import { ADDED_PERSON } from './persons/graphql-subscriptions'
 
 function App() {
   const { loading, error, data } = usePersons();
@@ -15,8 +16,15 @@ function App() {
   const [token, setToken] = useState(() => localStorage.getItem('phonenumbers-user-token'));
   const client = useApolloClient();
 
+  useSubscription(ADDED_PERSON, {
+    onData: ({data}) => {
+      console.log({data});
+      const {addedPerson} = data.data;
+    }
+  });
+
   if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error : {error.message}</p>;
+  if (error) return <span style='color: red'>Error : {error.message}</span>;
 
   const notifyError = message => {
     setErrorMessage(message);
