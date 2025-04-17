@@ -1,5 +1,5 @@
-import reactLogo from './assets/react.svg'
-import './App.css'
+import reactLogo from './assets/react.svg';
+import './App.css';
 import { Persons } from './Persons';
 import { PersonForm } from './PersonForm';
 import { usePersons } from './persons/custom-hooks';
@@ -8,7 +8,8 @@ import { Notify } from './Notify';
 import { PhoneForm } from './PhoneForm';
 import { LoginForm } from './LoginForm';
 import { useApolloClient, useSubscription } from '@apollo/client';
-import { ADDED_PERSON } from './persons/graphql-subscriptions'
+import { ADDED_PERSON } from './persons/graphql-subscriptions';
+import { ALL_PERSONS } from './persons/graphql-queries';
 
 function App() {
   const { loading, error, data } = usePersons();
@@ -20,6 +21,19 @@ function App() {
     onData: ({data}) => {
       console.log({data});
       const {addedPerson} = data.data;
+
+      const dataInStore = client.readQuery({ query: ALL_PERSONS })
+      client.writeQuery({
+        query: ALL_PERSONS,
+        data: {
+          ...dataInStore,
+          allPersons: [
+            ...dataInStore.allPersons,
+            addedPerson
+          ]
+        }
+      })
+
     }
   });
 
